@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Me Daft Ferguson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bevan&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --tartan-green: #16241C;
+    --tartan-green-deep: #0E1811;
+    --tartan-red: #9E1B32;
+    --tartan-red-bright: #C4324B;
+    --tartan-navy: #1B2A4A;
+    --gold: #D9A441;
+    --gold-bright: #EAC372;
+    --parchment: #F3E8CC;
+    --parchment-dark: #E4D5AF;
+    --ink: #211A12;
+    --heather: #6E5A7D;
+    --good: #4C7A4A;
+    --sick: #7BA65C;
+  }
+
+  *{ box-sizing:border-box; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001s !important; animation-iteration-count:1 !important; transition-duration:0.001s !important; }
+  }
+
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    font-family:'Work Sans', sans-serif;
+    color:var(--ink);
+    background-color: var(--tartan-green);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(217,164,65,0.10) 0 3px, transparent 3px 46px),
+      repeating-linear-gradient(90deg, rgba(217,164,65,0.10) 0 3px, transparent 3px 46px),
+      repeating-linear-gradient(0deg, rgba(158,27,50,0.28) 0 7px, transparent 7px 92px),
+      repeating-linear-gradient(90deg, rgba(158,27,50,0.28) 0 7px, transparent 7px 92px),
+      repeating-linear-gradient(0deg, rgba(27,42,74,0.55) 0 18px, transparent 18px 184px),
+      repeating-linear-gradient(90deg, rgba(27,42,74,0.55) 0 18px, transparent 18px 184px);
+  }
+
+  .stage{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding: 26px 12px; }
+
+  .game-card{
+    width:100%; max-width: 460px;
+    background: var(--parchment);
+    border-radius: 10px;
+    overflow:hidden;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.45), 0 0 0 2px var(--gold);
+    position:relative;
+  }
+
+  /* HEADER */
+  .header{
+    background-color: var(--tartan-navy);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(217,164,65,0.18) 0 3px, transparent 3px 34px),
+      repeating-linear-gradient(90deg, rgba(217,164,65,0.18) 0 3px, transparent 3px 34px),
+      repeating-linear-gradient(0deg, rgba(158,27,50,0.5) 0 6px, transparent 6px 68px),
+      repeating-linear-gradient(90deg, rgba(158,27,50,0.5) 0 6px, transparent 6px 68px);
+    padding: 18px 18px 14px;
+    text-align:center;
+    border-bottom: 4px solid var(--gold);
+  }
+  .header .kicker{ color: var(--gold-bright); font-size: 12px; margin: 0 0 2px; }
+  .header h1{
+    font-family:'Bevan', serif;
+    color: var(--parchment);
+    font-size: clamp(23px, 6.6vw, 30px);
+    margin: 0;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.35);
+    line-height:1.08;
+  }
+  .header .goal-line{ margin-top:7px; color: var(--parchment-dark); font-size: 12.5px; line-height:1.45; }
+  .header .goal-line b{ color: var(--gold-bright); }
+
+  /* PET AREA */
+  .pet-area{
+    position:relative;
+    background: linear-gradient(180deg, #E9DCB8 0%, var(--parchment) 65%);
+    padding: 16px 18px 6px;
+    display:flex; flex-direction:column; align-items:center;
+  }
+
+  .speech-bubble{
+    background: #fff; border: 2px solid var(--ink); border-radius: 14px;
+    padding: 9px 16px; font-size: 13.5px; font-weight:600;
+    max-width: 90%; text-align:center; position:relative; margin-bottom: 6px; min-height: 20px;
+  }
+  .speech-bubble::after{ content:""; position:absolute; bottom:-9px; left:50%; transform:translateX(-50%);
+    border-width: 9px 8px 0 8px; border-style: solid; border-color: var(--ink) transparent transparent transparent; }
+  .speech-bubble::before{ content:""; position:absolute; bottom:-6.5px; left:50%; transform:translateX(-50%);
+    border-width: 7px 6.5px 0 6.5px; border-style: solid; border-color: #fff transparent transparent transparent; z-index:1; }
+
+  .ferguson-wrap{ width: 220px; height: 172px; display:flex; align-items:flex-end; justify-content:center; }
+  .ferguson-svg{ animation: bob 2.6s ease-in-out infinite; transition: filter 0.6s ease; }
+  @keyframes bob{ 0%,100%{ transform: translateY(0) rotate(0deg); } 50%{ transform: translateY(-5px) rotate(-1deg); } }
+  .eyelid{ animation: blink 4.4s infinite; transform-origin:center; }
+  @keyframes blink{ 0%, 92%, 100%{ transform: scaleY(0); } 95%{ transform: scaleY(1); } }
+  .ground-shadow{ width:130px; height:13px; background: rgba(0,0,0,0.18); border-radius:50%; margin-top:-4px; filter: blur(1px); }
+
+  .sick-tint{ opacity:0; transition: opacity 0.5s ease; }
+  .sick-active .sick-tint{ opacity:1; }
+
+  /* ROUTINE / COMBO STRIP */
+  .routine{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    padding: 4px 18px 10px;
+    background: var(--parchment);
+  }
+  .routine .routine-label{ font-size:11px; color:#6b5a3f; font-weight:600; margin-right:2px; }
+  .routine-step{
+    width:30px; height:30px; border-radius:7px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; background: rgba(0,0,0,0.07);
+    border: 2px solid transparent; opacity:0.5;
+  }
+  .routine-step.next{ border-color: var(--tartan-red); opacity:1; background:#fff; animation: pulse 1.4s infinite; }
+  .routine-step.done{ opacity:0.35; }
+  @keyframes pulse{ 0%,100%{ box-shadow: 0 0 0 0 rgba(158,27,50,0.35);} 50%{ box-shadow: 0 0 0 5px rgba(158,27,50,0);} }
+
+  .sequence-preview{ text-align:center; font-size:11.5px; color:#6b5a3f; font-weight:600; padding: 0 18px 4px; background: var(--parchment); letter-spacing:0.02em; }
+  .difficulty-line{ text-align:center; font-size:10.5px; color: var(--tartan-red); font-weight:700; padding: 0 18px 8px; background: var(--parchment); }
+
+  /* STATS */
+  .stats{ padding: 6px 20px 6px; background: var(--parchment); }
+  .stat-row{ margin-bottom: 11px; }
+  .stat-label-line{ display:flex; justify-content:space-between; align-items:baseline; font-size: 12.5px; font-weight:600; margin-bottom: 4px; }
+  .stat-label-line .val{ font-variant-numeric: tabular-nums; color: #5c4c33; }
+  .bar-track{ height: 14px; background: rgba(0,0,0,0.12); border-radius: 8px; overflow:hidden; border: 1.5px solid rgba(0,0,0,0.25); position:relative; }
+  .bar-fill{ height:100%; border-radius: 6px; transition: width 0.5s ease, background-color 0.4s ease; }
+  .bar-fill.bampot{ background: linear-gradient(90deg, var(--heather), #8A6FA0); }
+  .bar-fill.hunger{ background: linear-gradient(90deg, #C2841E, var(--gold)); }
+  .bar-fill.happy{ background: linear-gradient(90deg, #2f5f2d, var(--good)); }
+  .goal-marker{ position:absolute; top:-2px; bottom:-2px; width: 2px; background: var(--tartan-red); }
+  .goal-marker::after{ content:"67"; position:absolute; top:-15px; left:50%; transform:translateX(-50%); font-size: 9.5px; font-weight:700; color: var(--tartan-red); }
+
+  /* ACTIONS */
+  .actions{ padding: 10px 20px 16px; display:grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--parchment); }
+  button.action-btn{
+    font-family:'Work Sans', sans-serif; font-weight:700; font-size: 13px;
+    color: var(--parchment); background: var(--tartan-green);
+    border: 2px solid var(--gold); border-radius: 8px; padding: 11px 6px;
+    cursor:pointer; box-shadow: 0 3px 0 var(--tartan-green-deep);
+    transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.2s ease;
+    position:relative; overflow:hidden;
+  }
+  button.action-btn:active:not(:disabled){ transform: translateY(3px); box-shadow: 0 0 0 var(--tartan-green-deep); }
+  button.action-btn:disabled{ opacity: 0.55; cursor:not-allowed; }
+  button.action-btn .emoji{ margin-right:5px; }
+  button.action-btn.haggis{ background: var(--tartan-red); border-color: var(--gold-bright); }
+  .cd-fill{
+    position:absolute; left:0; bottom:0; height:3px; background: var(--gold-bright);
+    width:0%; transition: width 0.15s linear;
+  }
+  .cd-text{ font-size: 10.5px; opacity:0.85; display:block; font-weight:600; }
+
+  /* LOG */
+  .log{ background: var(--tartan-green-deep); color: var(--parchment-dark); font-size: 12px; padding: 9px 20px; max-height: 72px; overflow-y:auto; line-height:1.5; }
+  .log div{ opacity:0.85; }
+  .log div:last-child{ opacity:1; color: var(--gold-bright); font-weight:600; }
+
+  /* OVERLAYS */
+  .overlay{
+    position:absolute; inset:0; background: rgba(14, 24, 17, 0.96);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding: 28px 24px; opacity:0; pointer-events:none; transition: opacity 0.35s ease;
+  }
+  .overlay.show{ opacity:1; pointer-events:all; }
+  .overlay .big-emoji{ font-size:50px; margin-bottom:8px; }
+  .overlay h2{ font-family:'Bevan', serif; font-size: 25px; margin: 0 0 9px; line-height:1.15; }
+  .overlay.win h2{ color: var(--gold-bright); }
+  .overlay.lose h2{ color: #E3806F; }
+  .overlay.qte h2{ color: var(--sick); }
+  .overlay p{ color: var(--parchment-dark); font-size: 13.5px; max-width: 320px; margin: 0 0 18px; line-height:1.5; }
+  .overlay button.big-btn{
+    font-family:'Work Sans', sans-serif; font-weight:700; font-size: 14px; color: var(--ink);
+    background: var(--gold-bright); border: none; border-radius: 8px; padding: 11px 24px;
+    cursor:pointer; box-shadow: 0 3px 0 #a67c2f;
+  }
+  .overlay button.big-btn:active{ transform:translateY(3px); box-shadow:none; }
+
+  /* QTE overlay specifics */
+  .qte-prompt-icon{ font-size:46px; margin: 6px 0 4px; animation: qteIconPop 0.35s ease; }
+  @keyframes qteIconPop{ 0%{ transform: scale(0.4); opacity:0; } 100%{ transform: scale(1); opacity:1; } }
+  .qte-timerbar-track{ width: 220px; height:10px; background: rgba(255,255,255,0.15); border-radius:6px; overflow:hidden; margin: 6px 0 18px; }
+  .qte-timerbar-fill{ height:100%; background: var(--tartan-red-bright); width:100%; }
+  .qte-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; width:100%; max-width:280px; }
+  .qte-grid button{
+    font-family:'Work Sans', sans-serif; font-weight:700; font-size: 13px; color: var(--ink);
+    background: var(--parchment); border: 2px solid var(--gold-bright); border-radius: 8px;
+    padding: 12px 6px; cursor:pointer;
+  }
+  .qte-grid button:active{ transform:scale(0.96); }
+  .qte-step-count{ color: var(--parchment-dark); font-size: 12px; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="game-card" id="gameCard">
+
+    <div class="header">
+      <p class="kicker">A wee game o' Highland minding</p>
+      <h1>Me Daft Ferguson</h1>
+      <p class="goal-line">Get the <b>Bampot Meter</b> tae <b>67</b> — it only climbs by <b>1</b> each time ye complete a full routine, and the order reshuffles every time. Watch the cooldoons, and dinnae let him starve, greet, or go doon wi' the Lurgy. It gets waur the daftier he gets.</p>
+    </div>
+
+    <div class="pet-area" id="petArea">
+      <div class="speech-bubble" id="speech">Awright pal. Ah'm Ferguson. Ah'm a wee bit daft, but ah'm aw yours.</div>
+
+      <div class="ferguson-wrap">
+        <svg class="ferguson-svg" id="fergSvg" width="220" height="172" viewBox="0 0 220 172" xmlns="http://www.w3.org/2000/svg">
+          <!-- tail -->
+          <path d="M172 108 Q205 98 202 72 Q210 92 196 106 Q210 108 200 122 Q186 128 172 118 Z" fill="#8A7566"/>
+          <!-- back legs w/ claws -->
+          <g fill="#7E6B5F">
+            <rect x="82" y="118" width="17" height="28" rx="7"/>
+            <rect x="142" y="118" width="17" height="28" rx="7"/>
+          </g>
+          <g fill="#5C4C3F">
+            <rect x="80" y="144" width="6" height="7" rx="2"/>
+            <rect x="88" y="145" width="6" height="8" rx="2"/>
+            <rect x="96" y="144" width="6" height="7" rx="2"/>
+            <rect x="140" y="144" width="6" height="7" rx="2"/>
+            <rect x="148" y="145" width="6" height="8" rx="2"/>
+            <rect x="156" y="144" width="6" height="7" rx="2"/>
+          </g>
+          <!-- humped body -->
+          <path d="M60 108
+                   C56 78, 84 54, 122 54
+                   C160 54, 186 72, 188 100
+                   C190 122, 172 140, 130 142
+                   C92 144, 64 134, 60 108 Z" fill="#A8907E"/>
+          <path d="M60 108 C58 92 66 76 82 64 C70 78 66 96 70 112 C74 128 92 136 112 138 C88 140 66 130 60 108 Z" fill="#977E6C" opacity="0.55"/>
+
+          <!-- front legs w/ claws -->
+          <g fill="#8B7767">
+            <rect x="96" y="126" width="16" height="26" rx="7"/>
+            <rect x="126" y="126" width="16" height="26" rx="7"/>
+          </g>
+          <g fill="#5C4C3F">
+            <rect x="94" y="150" width="6" height="7" rx="2"/>
+            <rect x="102" y="151" width="6" height="8" rx="2"/>
+            <rect x="110" y="150" width="6" height="7" rx="2"/>
+            <rect x="124" y="150" width="6" height="7" rx="2"/>
+            <rect x="132" y="151" width="6" height="8" rx="2"/>
+            <rect x="140" y="150" width="6" height="7" rx="2"/>
+          </g>
+
+          <!-- tartan scarf -->
+          <g>
+            <path d="M60 78 Q76 96 66 112 L52 106 Q58 90 46 76 Z" fill="#9E1B32"/>
+            <path d="M60 78 Q76 96 66 112 L52 106 Q58 90 46 76 Z" fill="url(#scarfStripes)" opacity="0.9"/>
+          </g>
+
+          <!-- head -->
+          <ellipse cx="52" cy="70" rx="27" ry="25" fill="#A8907E"/>
+
+          <!-- elongated snout, tapering, angled down -->
+          <path d="M28 68
+                   C6 66, -8 74, -6 84
+                   C-8 92, 4 98, 22 94
+                   C30 92, 34 84, 32 76 Z" fill="#977E6C"/>
+          <ellipse cx="-4" cy="86" rx="5.5" ry="6" fill="#3B322A"/>
+          <path d="M2 94 Q10 98 18 94" stroke="#3B322A" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.6"/>
+
+          <!-- long donkey-like ears -->
+          <path d="M34 48 Q18 -2 44 10 Q54 34 50 56 Q42 54 34 48 Z" fill="#A8907E"/>
+          <path d="M66 48 Q80 -4 56 10 Q46 34 50 56 Q58 54 66 48 Z" fill="#A8907E"/>
+          <path d="M36 46 Q26 4 42 14 Q48 32 46 50 Q40 49 36 46 Z" fill="#D8C3AE"/>
+          <path d="M64 46 Q74 4 58 14 Q52 32 54 50 Q60 49 64 46 Z" fill="#D8C3AE"/>
+
+          <!-- eyes -->
+          <circle cx="42" cy="66" r="3.8" fill="#211A12"/>
+          <circle cx="60" cy="66" r="3.8" fill="#211A12"/>
+          <rect class="eyelid" x="38" y="62" width="8" height="8" fill="#A8907E"/>
+          <rect class="eyelid" x="56" y="62" width="8" height="8" fill="#A8907E"/>
+
+          <!-- blush -->
+          <circle cx="36" cy="76" r="3.6" fill="#c98b6f" opacity="0.45"/>
+          <circle cx="66" cy="76" r="3.6" fill="#c98b6f" opacity="0.45"/>
+
+          <!-- tam o'shanter hat, sat between the ears -->
+          <g>
+            <ellipse cx="52" cy="38" rx="24" ry="9" fill="#1B2A4A"/>
+            <path d="M30 38 Q30 14 52 14 Q74 14 74 38 Q63 30 52 30 Q41 30 30 38 Z" fill="#24345A"/>
+            <path d="M30 38 Q30 14 52 14 Q74 14 74 38 Q63 30 52 30 Q41 30 30 38 Z" fill="url(#hatStripes)" opacity="0.5"/>
+            <circle cx="52" cy="16.5" r="6" fill="#9E1B32"/>
+            <circle cx="52" cy="16.5" r="6" fill="none" stroke="#D9A441" stroke-width="1.3"/>
+          </g>
+
+          <!-- sick tint overlay -->
+          <ellipse class="sick-tint" cx="60" cy="108" rx="64" ry="46" fill="#7BA65C" opacity="0.28"/>
+
+          <defs>
+            <pattern id="scarfStripes" width="7" height="12" patternUnits="userSpaceOnUse">
+              <rect width="7" height="12" fill="transparent"/>
+              <rect x="0" width="2.2" height="12" fill="#D9A441"/>
+              <rect x="4.4" width="1.3" height="12" fill="#1B2A4A"/>
+            </pattern>
+            <pattern id="hatStripes" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="9" height="9" fill="transparent"/>
+              <rect x="0" width="2" height="9" fill="#D9A441"/>
+            </pattern>
+          </defs>
+        </svg>
+      </div>
+      <div class="ground-shadow"></div>
+    </div>
+
+    <div class="routine">
+      <span class="routine-label">Guid routine:</span>
+      <div class="routine-step" id="rFeed">🥘</div>
+      <div class="routine-step" id="rPlay">🎾</div>
+      <div class="routine-step" id="rTalk">💬</div>
+      <div class="routine-step" id="rRest">🛏️</div>
+    </div>
+    <div class="sequence-preview" id="sequencePreview">Next up: 🥘 → 🎾 → 💬 → 🛏️</div>
+    <div class="difficulty-line" id="difficultyLine">Daftness level: 1</div>
+
+    <div class="stats">
+      <div class="stat-row">
+        <div class="stat-label-line"><span>Bampot meter</span><span class="val"><span id="bampotVal">0</span> / 67</span></div>
+        <div class="bar-track"><div class="bar-fill bampot" id="bampotBar" style="width:0%"></div><div class="goal-marker" style="left:67%"></div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label-line"><span>Hunger</span><span class="val"><span id="hungerVal">70</span> / 100</span></div>
+        <div class="bar-track"><div class="bar-fill hunger" id="hungerBar" style="width:70%"></div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label-line"><span>Happy</span><span class="val"><span id="happyVal">65</span> / 100</span></div>
+        <div class="bar-track"><div class="bar-fill happy" id="happyBar" style="width:65%"></div></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn haggis" id="btnFeed" data-cd="8000">
+        <span class="emoji">🥘</span>Feed Haggis
+        <span class="cd-text" id="cdFeed"></span>
+        <span class="cd-fill" id="cdFillFeed"></span>
+      </button>
+      <button class="action-btn" id="btnPlay" data-cd="6000">
+        <span class="emoji">🎾</span>Gie a Play
+        <span class="cd-text" id="cdPlay"></span>
+        <span class="cd-fill" id="cdFillPlay"></span>
+      </button>
+      <button class="action-btn" id="btnTalk" data-cd="5000">
+        <span class="emoji">💬</span>Have a Blether
+        <span class="cd-text" id="cdTalk"></span>
+        <span class="cd-fill" id="cdFillTalk"></span>
+      </button>
+      <button class="action-btn" id="btnRest" data-cd="7000">
+        <span class="emoji">🛏️</span>Put Tae Bed
+        <span class="cd-text" id="cdRest"></span>
+        <span class="cd-fill" id="cdFillRest"></span>
+      </button>
+    </div>
+
+    <div class="log" id="log"><div>Ferguson's just wakened up. Best get some scran in him.</div></div>
+
+    <!-- LOSE -->
+    <div class="overlay lose" id="loseOverlay">
+      <div class="big-emoji">💀</div>
+      <h2 id="loseTitle">Ferguson's away tae see a man aboot a dug.</h2>
+      <p id="loseText">He couldnae take nae mair. It's a sad day in the Highlands.</p>
+      <button class="big-btn" id="btnRestartLose">Gie It Laldy Again</button>
+    </div>
+
+    <!-- WIN -->
+    <div class="overlay win" id="winOverlay">
+      <div class="big-emoji">🏴</div>
+      <h2>Ya Dancer! Full Bampot!</h2>
+      <p>Ferguson's Bampot Meter hit 67 and he's never been happier — a certified, card-carryin' radge. Well done, pal.</p>
+      <button class="big-btn" id="btnRestartWin">Play Again</button>
+    </div>
+
+    <!-- QTE ILLNESS -->
+    <div class="overlay qte" id="qteOverlay">
+      <div class="big-emoji">🤒</div>
+      <h2>The Highland Lurgy!</h2>
+      <p id="qteIntroText">Ferguson's come doon wi' a right dose o' the Lurgy. Quick, match whit he needs afore the timer's oot!</p>
+      <div class="qte-prompt-icon" id="qtePromptIcon">🥘</div>
+      <div class="qte-timerbar-track"><div class="qte-timerbar-fill" id="qteTimerFill"></div></div>
+      <div class="qte-grid">
+        <button id="qteFeed">🥘 Haggis</button>
+        <button id="qtePlay">🎾 Play</button>
+        <button id="qteTalk">💬 Blether</button>
+        <button id="qteRest">🛏️ Bed</button>
+      </div>
+      <div class="qte-step-count" id="qteStepCount">Step 1 of 4</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  let ORDER = ['feed','play','talk','rest'];
+  const ICON = { feed:'🥘', play:'🎾', talk:'💬', rest:'🛏️' };
+
+  function shuffleOrder(){
+    const a = ['feed','play','talk','rest'];
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    ORDER = a;
+  }
+
+  const state = {
+    bampot: 0, hunger: 70, happy: 65,
+    over: false,
+    expected: 0,
+    qteActive: false,
+    cooldowns: { feed:0, play:0, talk:0, rest:0 }
+  };
+
+  // Daftness scales 0 -> 1 as the Bampot Meter climbs toward 67, and makes
+  // everything harder: faster stat drain, more frequent and nastier Lurgy attacks.
+  function difficulty(){ return Math.min(1, state.bampot / 67); }
+
+  const els = {
+    speech: document.getElementById('speech'),
+    petArea: document.getElementById('petArea'),
+    bampotVal: document.getElementById('bampotVal'),
+    hungerVal: document.getElementById('hungerVal'),
+    happyVal: document.getElementById('happyVal'),
+    bampotBar: document.getElementById('bampotBar'),
+    hungerBar: document.getElementById('hungerBar'),
+    happyBar: document.getElementById('happyBar'),
+    log: document.getElementById('log'),
+    fergSvg: document.getElementById('fergSvg'),
+    loseOverlay: document.getElementById('loseOverlay'),
+    winOverlay: document.getElementById('winOverlay'),
+    qteOverlay: document.getElementById('qteOverlay'),
+    loseTitle: document.getElementById('loseTitle'),
+    loseText: document.getElementById('loseText'),
+    btnFeed: document.getElementById('btnFeed'),
+    btnPlay: document.getElementById('btnPlay'),
+    btnTalk: document.getElementById('btnTalk'),
+    btnRest: document.getElementById('btnRest'),
+    btnRestartLose: document.getElementById('btnRestartLose'),
+    btnRestartWin: document.getElementById('btnRestartWin'),
+    routineSteps: { feed: document.getElementById('rFeed'), play: document.getElementById('rPlay'), talk: document.getElementById('rTalk'), rest: document.getElementById('rRest') },
+    sequencePreview: document.getElementById('sequencePreview'),
+    difficultyLine: document.getElementById('difficultyLine'),
+    qtePromptIcon: document.getElementById('qtePromptIcon'),
+    qteTimerFill: document.getElementById('qteTimerFill'),
+    qteStepCount: document.getElementById('qteStepCount'),
+    qteBtns: { feed: document.getElementById('qteFeed'), play: document.getElementById('qtePlay'), talk: document.getElementById('qteTalk'), rest: document.getElementById('qteRest') }
+  };
+
+  const btnMap = { feed: els.btnFeed, play: els.btnPlay, talk: els.btnTalk, rest: els.btnRest };
+  const cdTextMap = { feed: document.getElementById('cdFeed'), play: document.getElementById('cdPlay'), talk: document.getElementById('cdTalk'), rest: document.getElementById('cdRest') };
+  const cdFillMap = { feed: document.getElementById('cdFillFeed'), play: document.getElementById('cdFillPlay'), talk: document.getElementById('cdFillTalk'), rest: document.getElementById('cdFillRest') };
+
+  const idleLines = [
+    "Awright pal, whit's the score?",
+    "Ah could murder a haggis right noo.",
+    "Is it Baltic in here or is it jist me?",
+    "Ye're a pure dead brilliant pal, so ye are.",
+    "Ma snoot's fair itchy the day.",
+    "Whit's fur ye'll no go past ye.",
+    "Dinnae fash yersel, ah'm fine... probably.",
+    "Mind and stick tae the routine, aye?"
+  ];
+  const feedLines = ["Get it doon ye! Magic, that.", "Aw, pure dead brilliant. Haggis fur the win.", "Ah'm buzzin' noo, pal!", "Neeps and tatties woulda been nice n' aw."];
+  const playLines = ["Ha! That's pure gallus, that is.", "Ah'm gettin' a richt sweat oan here.", "Chase us then, ya bampot!"];
+  const talkLines = ["Aye, tell us anither yin.", "Yer a braw wee blether, so ye are.", "Ah could listen tae ye a' day."];
+  const restLines = ["Aye, forty winks widnae go amiss.", "Shh... jist haein' a wee lie doon."];
+  const comboGoodLines = ["Noo that's the ticket! Ye ken the routine.", "Aye! Right order, right result.", "Feel the bampot risin', pal!"];
+  const comboBrokenLines = ["Naw, that's no how it goes! Combo's away.", "Wrang order, pal. Start again.", "Ach, ye've broke the routine."];
+  const fullComboLines = ["FULL ROUTINE! Ferguson's fair radge noo!", "That's the whole caboodle — magic!"];
+  const starveLines = ["Ah'm fair wastin' away here, pal...", "Ma belly's that empty it's echoin'."];
+  const sadLines = ["Ah'm no daein' too clever, tae be honest.", "Feelin' a wee bit greetin' the day."];
+  const qteSuccessLines = ["Phew, that's me right as rain again!", "Cured! Ah'll live tae eat anither haggis."];
+  const qteFailLines = ["Ah... ah dinnae feel sae guid...", "It's aw gaun black, pal..."];
+
+  let tickHandle = null, speechHandle = null, illnessHandle = null, cdUiHandle = null;
+  let qte = null;
+
+  function clamp(n){ return Math.max(0, Math.min(100, n)); }
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function log(msg){
+    const div = document.createElement('div');
+    div.textContent = msg;
+    els.log.appendChild(div);
+    els.log.scrollTop = els.log.scrollHeight;
+    while(els.log.children.length > 6){ els.log.removeChild(els.log.firstChild); }
+  }
+
+  function say(msg){ els.speech.textContent = msg; }
+
+  function render(){
+    els.bampotVal.textContent = state.bampot;
+    els.hungerVal.textContent = state.hunger;
+    els.happyVal.textContent = state.happy;
+    els.bampotBar.style.width = Math.min(100, (state.bampot/67)*100) + '%';
+    els.hungerBar.style.width = state.hunger + '%';
+    els.happyBar.style.width = state.happy + '%';
+
+    const wellbeing = (state.hunger + state.happy) / 2;
+    const grey = clamp(100 - wellbeing) / 140;
+    els.fergSvg.style.filter = `grayscale(${grey}) brightness(${1 - grey*0.25})`;
+
+    ORDER.forEach((key, i) => {
+      const el = els.routineSteps[key];
+      el.classList.toggle('next', i === state.expected && !state.over && !state.qteActive);
+      el.classList.toggle('done', i !== state.expected);
+    });
+
+    const upcoming = [];
+    for(let i = 0; i < ORDER.length; i++){ upcoming.push(ICON[ORDER[(state.expected + i) % ORDER.length]]); }
+    els.sequencePreview.textContent = 'Next up: ' + upcoming.join(' → ');
+
+    els.difficultyLine.textContent = 'Daftness level: ' + (1 + Math.round(difficulty() * 9));
+  }
+
+  function checkEnd(){
+    if(state.over) return;
+    if(state.hunger <= 0){ endGame(false, "Ferguson's away tae see a man aboot a dug.", "He got that toom-bellied he couldnae go on. Mind and feed him next time, aye?"); return; }
+    if(state.happy <= 0){ endGame(false, "Ferguson's greetin' heart gave oot.", "A sad, sad day in the Highlands. He needed a wee bit mair fun and cuddles."); return; }
+    if(state.bampot >= 67){ endGame(true); return; }
+  }
+
+  function endGame(won, title, text){
+    state.over = true;
+    clearInterval(tickHandle); clearInterval(speechHandle); clearInterval(illnessHandle); clearInterval(cdUiHandle);
+    disableButtons(true);
+    if(won){ els.winOverlay.classList.add('show'); }
+    else { els.loseTitle.textContent = title; els.loseText.textContent = text; els.loseOverlay.classList.add('show'); }
+  }
+
+  function disableButtons(disabled){
+    Object.values(btnMap).forEach(b => b.disabled = disabled);
+  }
+
+  function updateCooldownUI(){
+    const now = Date.now();
+    Object.keys(btnMap).forEach(key => {
+      const remainMs = state.cooldowns[key] - now;
+      const btn = btnMap[key];
+      const total = parseInt(btn.dataset.cd, 10);
+      if(remainMs > 0 && !state.over && !state.qteActive){
+        btn.disabled = true;
+        cdTextMap[key].textContent = (remainMs/1000).toFixed(1) + 's';
+        cdFillMap[key].style.width = (100 - (remainMs/total)*100) + '%';
+      } else {
+        if(!state.over && !state.qteActive) btn.disabled = false;
+        cdTextMap[key].textContent = '';
+        cdFillMap[key].style.width = '100%';
+      }
+    });
+  }
+
+  function tryAction(key){
+    if(state.over || state.qteActive) return;
+    if(Date.now() < state.cooldowns[key]) return;
+
+    const btn = btnMap[key];
+    const cd = parseInt(btn.dataset.cd, 10);
+    state.cooldowns[key] = Date.now() + cd;
+
+    if(key === 'feed'){ state.hunger = clamp(state.hunger + 18); state.happy = clamp(state.happy + 1); say(pick(feedLines)); log("Ye fed Ferguson a haggis."); }
+    if(key === 'play'){ state.happy = clamp(state.happy + 9); state.hunger = clamp(state.hunger - 6); say(pick(playLines)); log("Ye had a wee play wi' Ferguson."); }
+    if(key === 'talk'){ state.happy = clamp(state.happy + 6); say(pick(talkLines)); log("Ye had a blether wi' Ferguson."); }
+    if(key === 'rest'){ state.hunger = clamp(state.hunger - 3); state.happy = clamp(state.happy + 4); say(pick(restLines)); log("Ferguson had a wee lie doon."); }
+
+    if(ORDER[state.expected] === key){
+      state.expected += 1;
+      if(state.expected >= ORDER.length){
+        // Full routine complete — this is the ONLY way the Bampot Meter climbs.
+        state.bampot = Math.min(67, state.bampot + 1);
+        state.happy = clamp(state.happy + 6);
+        state.expected = 0;
+        shuffleOrder();
+        setTimeout(()=> say(pick(fullComboLines)), 550);
+        log("Full routine done — Bampot Meter up by 1!");
+      } else {
+        setTimeout(()=> say(pick(comboGoodLines)), 550);
+      }
+    } else {
+      state.expected = (key === ORDER[0]) ? 1 : 0;
+      state.happy = clamp(state.happy - 6);
+      setTimeout(()=> say(pick(comboBrokenLines)), 550);
+      log("Wrang order — combo broken, back tae step one.");
+    }
+
+    render();
+    updateCooldownUI();
+    checkEnd();
+  }
+
+  function tick(){
+    if(state.over || state.qteActive) return;
+    const d = difficulty();
+    state.hunger = clamp(state.hunger - (4 + d * 3.5));
+    state.happy = clamp(state.happy - (3 + d * 2.5));
+    render();
+    checkEnd();
+  }
+
+  function ambientSpeech(){
+    if(state.over || state.qteActive) return;
+    if(state.hunger < 25){ say(pick(starveLines)); }
+    else if(state.happy < 25){ say(pick(sadLines)); }
+    else { say(pick(idleLines)); }
+  }
+
+  /* ---------------- ILLNESS / QTE ---------------- */
+
+  function maybeTriggerIllness(){
+    if(state.over || state.qteActive) return;
+    const d = difficulty();
+    if(Math.random() < (0.30 + d * 0.25)){ startIllnessQTE(); }
+  }
+
+  function startIllnessQTE(){
+    state.qteActive = true;
+    els.petArea.parentElement && document.getElementById('gameCard').classList.add('sick-active');
+    disableButtons(true);
+    say("Uh oh... ah'm no feelin' masel'...");
+    log("Ferguson's come doon wi' the Highland Lurgy!");
+
+    const d = difficulty();
+    const seqLen = 4 + Math.round(d * 3); // 4 steps early game, up to 7 when Ferguson's fully daft
+    const duration = Math.round(1700 - d * 700); // 1700ms early, down to 1000ms at max daftness
+    qte = { seq: [], step: 0, duration: duration, timeoutId: null, startedAt: 0 };
+    for(let i=0;i<seqLen;i++){ qte.seq.push(ORDER[Math.floor(Math.random()*ORDER.length)]); }
+
+    els.qteOverlay.classList.add('show');
+    showQteStep();
+  }
+
+  function showQteStep(){
+    if(!qte) return;
+    const key = qte.seq[qte.step];
+    els.qtePromptIcon.textContent = ICON[key];
+    els.qteStepCount.textContent = `Step ${qte.step+1} of ${qte.seq.length}`;
+    els.qteTimerFill.style.transition = 'none';
+    els.qteTimerFill.style.width = '100%';
+    requestAnimationFrame(()=>{
+      els.qteTimerFill.style.transition = `width ${qte.duration}ms linear`;
+      els.qteTimerFill.style.width = '0%';
+    });
+    clearTimeout(qte.timeoutId);
+    qte.timeoutId = setTimeout(()=> failQte(), qte.duration);
+  }
+
+  function qteAnswer(key){
+    if(!qte) return;
+    if(key === qte.seq[qte.step]){
+      clearTimeout(qte.timeoutId);
+      qte.step++;
+      if(qte.step >= qte.seq.length){ succeedQte(); }
+      else { showQteStep(); }
+    } else {
+      failQte();
+    }
+  }
+
+  function succeedQte(){
+    clearTimeout(qte.timeoutId);
+    els.qteOverlay.classList.remove('show');
+    document.getElementById('gameCard').classList.remove('sick-active');
+    state.qteActive = false;
+    qte = null;
+    state.hunger = clamp(state.hunger - 8);
+    state.happy = clamp(state.happy - 4);
+    disableButtons(false);
+    say(pick(qteSuccessLines));
+    log("Cured! That's the Lurgy seen tae.");
+    render();
+    checkEnd();
+  }
+
+  function failQte(){
+    clearTimeout(qte.timeoutId);
+    els.qteOverlay.classList.remove('show');
+    qte = null;
+    say(pick(qteFailLines));
+    endGame(false, "The Lurgy got the better of him.", "Ye didnae cure him in time. Ferguson's fought his last fight wi' the Highland Lurgy.");
+  }
+
+  els.qteBtns.feed.addEventListener('click', ()=> qteAnswer('feed'));
+  els.qteBtns.play.addEventListener('click', ()=> qteAnswer('play'));
+  els.qteBtns.talk.addEventListener('click', ()=> qteAnswer('talk'));
+  els.qteBtns.rest.addEventListener('click', ()=> qteAnswer('rest'));
+
+  /* ---------------- WIRE UP ---------------- */
+
+  els.btnFeed.addEventListener('click', ()=> tryAction('feed'));
+  els.btnPlay.addEventListener('click', ()=> tryAction('play'));
+  els.btnTalk.addEventListener('click', ()=> tryAction('talk'));
+  els.btnRest.addEventListener('click', ()=> tryAction('rest'));
+  els.btnRestartLose.addEventListener('click', resetGame);
+  els.btnRestartWin.addEventListener('click', resetGame);
+
+  function resetGame(){
+    state.bampot = 0; state.hunger = 70; state.happy = 65;
+    state.over = false; state.expected = 0; state.qteActive = false;
+    state.cooldowns = { feed:0, play:0, talk:0, rest:0 };
+    shuffleOrder();
+    qte = null;
+    els.loseOverlay.classList.remove('show');
+    els.winOverlay.classList.remove('show');
+    els.qteOverlay.classList.remove('show');
+    document.getElementById('gameCard').classList.remove('sick-active');
+    disableButtons(false);
+    els.log.innerHTML = '';
+    log("Ferguson's just wakened up. Best get some scran in him.");
+    say("Awright pal. Ah'm Ferguson. Ah'm a wee bit daft, but ah'm aw yours.");
+    render();
+    startLoops();
+  }
+
+  function startLoops(){
+    clearInterval(tickHandle); clearInterval(speechHandle); clearInterval(illnessHandle); clearInterval(cdUiHandle);
+    tickHandle = setInterval(tick, 2600);
+    speechHandle = setInterval(ambientSpeech, 4200);
+    illnessHandle = setInterval(maybeTriggerIllness, 6000);
+    cdUiHandle = setInterval(updateCooldownUI, 150);
+  }
+
+  shuffleOrder();
+  render();
+  startLoops();
+})();
+</script>
+
+</body>
+</html>
